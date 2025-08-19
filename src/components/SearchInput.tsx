@@ -84,7 +84,7 @@ const SearchInput = () => {
         <button
           onClick={onSearch}
           disabled={isError || !value}
-          className='relative disabled:bg-slate-300 max-h-[40px] bg-blue-500 text-white rounded-md py-2 px-4 font-bold'
+          className='relative disabled:bg-slate-300 max-h-[40px] bg-blue-500 text-white rounded-md py-2 px-4 font-bold cursor-pointer'
         >
           Search
         </button>
