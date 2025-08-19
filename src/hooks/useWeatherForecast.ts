@@ -7,7 +7,7 @@ export const useWeatherForecast = (coord: Coordinates) => {
   const query = useQuery({
     queryKey: ['WEATHER_FORECAST', coord],
     queryFn: async () => {
-      const res = await axiosClient.get<ForecastData>(`/forecast?lat=${coord.lat}&lon=${coord.lon}&units=metric`);
+      const res = await axiosClient.get<ForecastData>(`/forecast?lat=${coord.lat}&lon=${coord.lng}&units=metric`);
       return res.data;
     }
   });

@@ -1,32 +1,32 @@
-import { useState } from 'react';
-
 import './App.css';
 
-import CurrentWeather from './components/CurrentWeather';
-import Forecast from './components/Forecast';
-import SearchInput from './components/SearchInput';
-import { useCurrentWeather } from './hooks/useCurrentWeather';
-import { useWeatherForecast } from './hooks/useWeatherForecast';
-import type { Coordinates } from './types/weather';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import HomePage from './pages/home';
+import SearchPage from './pages/search';
+import { ROUTES } from './constants';
 
-const SG_COORD = { lat: 1.36666666, lon: 103.8 };
+const router = createBrowserRouter([
+  {
+    path: ROUTES.HOME,
+    element: <MainLayout />,
+    children: [
+      {
+        path: ROUTES.HOME,
+        element: <HomePage />
+      },
+      {
+        path: ROUTES.SEARCH,
+        element: <SearchPage />
+      }
+    ]
+  }
+]);
 
 function App() {
-  const [coord, setCoord] = useState<Coordinates>(SG_COORD);
-  const currentWeather = useCurrentWeather(coord);
-  const weatherForecast = useWeatherForecast(coord);
-
-  const handleSearch = (coord?: Coordinates) => {
-    setCoord(coord || SG_COORD);
-  };
   return (
     <>
-      <div className='flex flex-col gap-6'>
-        <h1 className='text-5xl font-bold'>WEATHER APP</h1>
-        <SearchInput handleSearch={handleSearch} />
-        <CurrentWeather data={currentWeather.data} isLoading={currentWeather.isFetching} />
-        <Forecast data={weatherForecast.data} isLoading={weatherForecast.isFetching} />
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }
