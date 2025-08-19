@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+
+import './App.css';
+
+import CurrentWeather from './components/CurrentWeather';
+import Forecast from './components/Forecast';
+import SearchInput from './components/SearchInput';
+import { useCurrentWeather } from './hooks/useCurrentWeather';
+import { useWeatherForecast } from './hooks/useWeatherForecast';
+import type { Coordinates } from './types/weather';
+
+const SG_COORD = { lat: 1.36666666, lon: 103.8 };
 
 function App() {
-  const [count, setCount] = useState(0)
+  console.log(import.meta.env.VITE_VERCEL_API_URL);
 
+  const [coord, setCoord] = useState<Coordinates>(SG_COORD);
+  const currentWeather = useCurrentWeather(coord);
+  const weatherForecast = useWeatherForecast(coord);
+
+  const handleSearch = (coord?: Coordinates) => {
+    setCoord(coord || SG_COORD);
+  };
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='flex flex-col gap-6'>
+        <h1 className='text-5xl font-bold'>WEATHER APP</h1>
+        <SearchInput handleSearch={handleSearch} />
+        <CurrentWeather data={currentWeather.data} isLoading={currentWeather.isFetching} />
+        <Forecast data={weatherForecast.data} isLoading={weatherForecast.isFetching} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

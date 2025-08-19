@@ -1,0 +1,28 @@
+const Skeleton = () => {
+  return (
+    <div className='w-full min-w-[400px]'>
+      <div className='flex animate-pulse space-x-4'>
+        <div className='flex-1 space-y-6 py-1'>
+          <div className='space-y-3'>
+            <div className='grid grid-cols-3 gap-4'>
+              <div className='col-span-2 h-3 rounded bg-gray-200'></div>
+              <div className='col-span-1 h-3 rounded bg-gray-200'></div>
+            </div>
+            <div className='h-3 rounded bg-gray-200'></div>
+            <div className='h-3 rounded bg-gray-200'></div>
+            <div className='h-3 rounded bg-gray-200'></div>
+            <div className='grid grid-cols-3 gap-4'>
+              <div className='col-span-2 h-3 rounded bg-gray-200'></div>
+              <div className='col-span-1 h-3 rounded bg-gray-200'></div>
+            </div>
+            <div className='h-3 rounded bg-gray-200'></div>
+            <div className='h-3 rounded bg-gray-200'></div>
+            <div className='h-3 rounded bg-gray-200'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Skeleton;
