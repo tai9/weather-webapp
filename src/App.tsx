@@ -12,8 +12,6 @@ import type { Coordinates } from './types/weather';
 const SG_COORD = { lat: 1.36666666, lon: 103.8 };
 
 function App() {
-  console.log(import.meta.env.VITE_VERCEL_API_URL);
-
   const [coord, setCoord] = useState<Coordinates>(SG_COORD);
   const currentWeather = useCurrentWeather(coord);
   const weatherForecast = useWeatherForecast(coord);

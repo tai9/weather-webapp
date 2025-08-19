@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import Autosuggest from 'react-autosuggest';
 
 import { useCountries } from '@/hooks/useCountries';
 import type { Country } from '@/types/country';
 import type { Coordinates } from '@/types/weather';
 
-const RECENT_KEY = 'RECENT';
+const RECENT_SEARCH_KEY = 'RECENT_SEARCH';
 
 type Props = {
   handleSearch: (coord?: Coordinates) => void;
@@ -20,7 +20,7 @@ const SearchInput = ({ handleSearch }: Props) => {
   const [recentCountries, setRecentCountries] = useState<Country[]>([]);
 
   useEffect(() => {
-    const recents = localStorage.getItem(RECENT_KEY);
+    const recents = localStorage.getItem(RECENT_SEARCH_KEY);
     if (recents) {
       setRecentCountries(JSON.parse(recents));
     }
@@ -52,7 +52,7 @@ const SearchInput = ({ handleSearch }: Props) => {
       setRecentCountries((prev) => {
         const arr = prev.filter((x) => x.cca2 !== country.cca2);
         const recents = [country, ...arr];
-        localStorage.setItem('RECENT', JSON.stringify(recents));
+        localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(recents));
         return recents;
       });
     }
@@ -64,10 +64,6 @@ const SearchInput = ({ handleSearch }: Props) => {
 
   const onSuggestionsFetchRequested = ({ value }: { value: string }) => {
     setSuggestions(() => getSuggestions(value));
-  };
-
-  const onSuggestionsClearRequested = () => {
-    setSuggestions(recentCountries);
   };
 
   const getSuggestions = (value: string) => {
@@ -82,7 +78,7 @@ const SearchInput = ({ handleSearch }: Props) => {
   const getSuggestionValue = (suggestion: Country) => `${suggestion.name.common}, ${suggestion.cca2}`;
 
   const renderSuggestion = (suggestion: Country, clearable?: boolean) => (
-    <div className='p-3  bg-white w-full border-1 shadow-md flex gap-4 cursor-pointer justify-between'>
+    <div className='p-3  bg-white w-full shadow-2xl flex gap-4 cursor-pointer justify-between'>
       <div className='flex gap-3'>
         <img width={32} src={suggestion.flags.svg} alt='' />
         <span>
@@ -92,10 +88,16 @@ const SearchInput = ({ handleSearch }: Props) => {
       {clearable && (
         <div
           className=''
-          onClick={() => {
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             setRecentCountries((prev) => {
               const recents = prev.filter((x) => x.cca2 !== suggestion.cca2);
-              localStorage.setItem('RECENT', JSON.stringify(recents));
+              localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(recents));
               return recents;
             });
           }}
@@ -108,13 +110,12 @@ const SearchInput = ({ handleSearch }: Props) => {
     </div>
   );
   return (
-    <div className=' relative h-[40px] mb-2'>
+    <div className='relative h-[40px] mb-4'>
       <div className='flex gap-4 justify-between absolute w-full'>
         <div className='flex flex-col w-full items-start'>
           <Autosuggest
             suggestions={suggestions}
             onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={onSuggestionsClearRequested}
             getSuggestionValue={getSuggestionValue}
             renderSuggestion={(s) => renderSuggestion(s)}
             inputProps={{
@@ -123,17 +124,26 @@ const SearchInput = ({ handleSearch }: Props) => {
               onChange: onChange,
               onFocus() {
                 setShowRecents(true);
+              },
+              onBlur() {
+                setTimeout(() => setShowRecents(false), 50);
+              },
+              onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter' && !isError && value) {
+                  e.preventDefault();
+                  onSearch();
+                }
               }
             }}
             theme={{
               container: 'w-full relative',
-              input: 'p-2 bg-white w-full rounded-md focus:outline-none'
+              input: 'p-2 bg-white w-full rounded-md mb-2 focus:outline-none'
             }}
           />
           {showRecents && !value && (
-            <div className=' bg-white rounded-md shadow w-full mt-2'>
+            <div className=' bg-white rounded-md shadow w-full '>
               {recentCountries.map((x) => (
-                <div key={x.cca2} onClick={() => setValue(getSuggestionValue(x))}>
+                <div key={x.cca2} onMouseDown={() => setValue(getSuggestionValue(x))}>
                   {renderSuggestion(x, true)}
                 </div>
               ))}
