@@ -1,69 +1,91 @@
-# React + TypeScript + Vite
+# Weather Webapp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Simple weather search web app built with React and TypeScript. Search a country to see its current weather and a 5‑day forecast (in 3‑hour intervals). Recent searches are stored locally for quick access.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Current weather: temperature, description, humidity, wind, visibility
+- 5‑day / 3‑hour forecast grouped by day
+- Country search with suggestions and validation
+- Recent search history with per‑item delete and clear‑all
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19, TypeScript, Vite 7
+- React Router 7
+- TanStack Query 5 (+ Devtools)
+- Tailwind CSS 4
+- Axios
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Requirements
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Node.js and pnpm
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Environment Variables
+
+Create a `.env.local` at the project root with the following keys:
+
+```bash
+# Base URL for OpenWeather (or your proxy). The app appends /data/2.5 automatically.
+VITE_VERCEL_API_URL=https://api.openweathermap.org
+
+# OpenWeather API key (sent as appid in requests)
+VITE_VERCEL_API_KEY=YOUR_OPENWEATHER_API_KEY
+
+# Countries API base URL
+VITE_COUNTRIES_API_URL=https://restcountries.com/v3.1
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Notes:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Weather endpoints are requested from `${VITE_VERCEL_API_URL}/data/2.5` with `appid=VITE_VERCEL_API_KEY`.
+- Countries are fetched from `${VITE_COUNTRIES_API_URL}/all?fields=name,flags,latlng,cca2`.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+```bash
+pnpm install
+pnpm dev
 ```
+
+Then open the printed local URL in your browser.
+
+## Scripts
+
+```bash
+# Start dev server
+pnpm dev
+
+# Type-check and build
+pnpm build
+
+# Preview production build
+pnpm preview
+
+# Lint
+pnpm lint
+pnpm lint:fix
+```
+
+## Project Structure
+
+```
+src/
+  components/        # UI components (CurrentWeather, Forecast, SearchInput, etc.)
+  hooks/             # Data fetching hooks (useCurrentWeather, useWeatherForecast, useCountries)
+  pages/             # Routes: home/ and search/
+  layouts/           # MainLayout
+  configs/           # axios client
+  constants/         # route constants
+  utils/             # localStorage helpers for search history
+```
+
+## Conventions
+
+- Use pnpm for dependency management.
+- Build layouts with CSS flex/grid utilities; avoid using margin for page layout spacing.
+
+## Credits
+
+- Weather data by [OpenWeather](https://openweathermap.org/)
+- Country data by [REST Countries](https://restcountries.com/)
